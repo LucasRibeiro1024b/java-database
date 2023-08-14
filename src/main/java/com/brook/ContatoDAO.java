@@ -2,7 +2,6 @@ package com.brook;
 
 import java.sql.*;
 
-import com.mysql.cj.x.protobuf.MysqlxPrepare;
 import connection.ConnectionFactory;
 import model.Contato;
 
@@ -11,7 +10,6 @@ import java.util.Calendar;
 import java.util.List;
 
 public class ContatoDAO {
-
     private Connection connection;
 
     public ContatoDAO() {
@@ -34,7 +32,23 @@ public class ContatoDAO {
             stmt.execute();
             stmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void altera(Contato contato) {
+        String sql = "UPDATE contatos SET nome = ?, email = ?, endereco = ?, dataNascimento = ? WHERE id = ?";
+
+        try {
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setString(1, contato.getNome());
+            stmt.setString(2, contato.getEmail());
+            stmt.setString(3, contato.getEndereco());
+            stmt.setDate(4, new Date(contato.getDataNascimento().getTimeInMillis()));
+            stmt.setLong(5, contato.getId());
+            stmt.execute();
+            stmt.close();
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
@@ -47,14 +61,7 @@ public class ContatoDAO {
 
             while (rset.next()) {
                 Contato contato = new Contato();
-                contato.setId(rset.getLong("id"));
-                contato.setNome(rset.getString("nome"));
-                contato.setEmail(rset.getString("email"));
-                contato.setEndereco(rset.getString("endereco"));
-
-                Calendar data = Calendar.getInstance();
-                data.setTime(rset.getDate("dataNascimento"));
-                contato.setDataNascimento(data);
+                fillContato(contato, rset);
 
                 contatos.add(contato);
                 System.out.println(contato);
@@ -65,6 +72,36 @@ public class ContatoDAO {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public Contato pesquisar(Long id) {
+        Contato contato = new Contato();
+
+        try {
+            PreparedStatement stmt = this.connection.prepareStatement("SELECT * FROM contatos WHERE id = (?) LIMIT 1");
+            stmt.setLong(1, id);
+            ResultSet rset = stmt.executeQuery();
+
+            while (rset.next()) {
+                fillContato(contato, rset);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return contato;
+    }
+
+    private void fillContato(Contato contato, ResultSet rset) throws SQLException {
+        contato.setId(rset.getLong("id"));
+        contato.setNome(rset.getString("nome"));
+        contato.setEmail(rset.getString("email"));
+        contato.setEndereco(rset.getString("endereco"));
+
+        Calendar data = Calendar.getInstance();
+        data.setTime(rset.getDate("dataNascimento"));
+        contato.setDataNascimento(data);
     }
 
 }

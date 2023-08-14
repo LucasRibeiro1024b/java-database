@@ -3,6 +3,8 @@ package com.brook;
 import model.Contato;
 import com.brook.ContatoDAO;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
 public class TestaLista {
@@ -15,6 +17,7 @@ public class TestaLista {
             System.out.println("Email: " + contato.getEmail());
             System.out.println("Endereco: " + contato.getEndereco());
             System.out.println("Data de Nascimento: " + contato.getDataNascimento().getTime());
+            System.out.println(new SimpleDateFormat("yyyy/MM/dd hh:mm.ss").format(contato.getDataNascimento().getTime()));
             System.out.println("\n");
         }
     }
