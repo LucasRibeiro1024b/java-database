@@ -1,5 +1,6 @@
 package com.brook;
 
+import dao.ContatoDAO;
 import model.Contato;
 
 import java.util.Calendar;

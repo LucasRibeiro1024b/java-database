@@ -1,4 +1,4 @@
-package com.brook;
+package dao;
 
 import java.sql.*;
 
@@ -46,6 +46,19 @@ public class ContatoDAO {
             stmt.setString(3, contato.getEndereco());
             stmt.setDate(4, new Date(contato.getDataNascimento().getTimeInMillis()));
             stmt.setLong(5, contato.getId());
+            stmt.execute();
+            stmt.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void remove(Contato contato) {
+        String sql = "DELETE FROM contatos WHERE id=?";
+
+        try {
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setLong(1, contato.getId());
             stmt.execute();
             stmt.close();
         } catch (SQLException e) {

@@ -1,10 +1,9 @@
 package com.brook;
 
 import model.Contato;
-import com.brook.ContatoDAO;
+import dao.ContatoDAO;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.List;
 
 public class TestaLista {
