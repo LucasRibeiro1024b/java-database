@@ -1,11 +1,14 @@
 package com.brook;
 
-import java.sql.Connection;
+import java.sql.*;
+
+import com.mysql.cj.x.protobuf.MysqlxPrepare;
 import connection.ConnectionFactory;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import model.Contato;
-import java.sql.Date;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 public class ContatoDAO {
 
@@ -32,6 +35,34 @@ public class ContatoDAO {
             stmt.close();
         } catch (SQLException e) {
             System.out.println(e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<Contato> getLista() {
+        try {
+            List<Contato> contatos = new ArrayList<Contato>();
+            PreparedStatement stmt = this.connection.prepareStatement("SELECT * FROM contatos");
+            ResultSet rset = stmt.executeQuery(); // Retorna todas as tuplas da pesquisa
+
+            while (rset.next()) {
+                Contato contato = new Contato();
+                contato.setId(rset.getLong("id"));
+                contato.setNome(rset.getString("nome"));
+                contato.setEmail(rset.getString("email"));
+                contato.setEndereco(rset.getString("endereco"));
+
+                Calendar data = Calendar.getInstance();
+                data.setTime(rset.getDate("dataNascimento"));
+                contato.setDataNascimento(data);
+
+                contatos.add(contato);
+                System.out.println(contato);
+            }
+            rset.close();
+            stmt.close();
+            return contatos;
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }

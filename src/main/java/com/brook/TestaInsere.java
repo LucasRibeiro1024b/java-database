@@ -4,7 +4,7 @@ import model.Contato;
 
 import java.util.Calendar;
 
-public class TotaInsere {
+public class TestaInsere {
     public static void main (String[] args){
 
         Contato contato = new Contato();
